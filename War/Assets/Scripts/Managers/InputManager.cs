@@ -34,6 +34,8 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    public bool InventoryState { get => inventoryState; }
+
     void Awake()
     {
         Instance = this;
@@ -48,7 +50,8 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        InventoryPanelKey();
+        if (Input.GetKeyDown(AppConst.InventoryPanelKey))
+            InventoryPanelKey();
         ToolBarPanelKey();
     }
 
@@ -72,9 +75,9 @@ public class InputManager : MonoBehaviour
     /// <summary>
     /// 背包面板按下事件.
     /// </summary>
-    private void InventoryPanelKey()
+    public void InventoryPanelKey()
     {
-        if (Input.GetKeyDown(AppConst.InventoryPanelKey) && buildState == false)
+        if (buildState == false)
         {
             if (inventoryState)
             {
@@ -85,6 +88,9 @@ public class InputManager : MonoBehaviour
                 m_FPSController.enabled = true;
                 if (ToolBarPanelController.Instance.CurrentWeapon != null)
                     ToolBarPanelController.Instance.CurrentWeapon.GetComponent<GunControllerBase>().enabled = true;
+
+                // 显示安卓控制UI.
+                AndroidControlPanelManager.Instance.InventoryPanelHide();
             }
             else
             {
@@ -99,6 +105,9 @@ public class InputManager : MonoBehaviour
                 // 显示鼠标.
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+
+                // 隐藏安卓控制UI.
+                AndroidControlPanelManager.Instance.InventoryPanelShow();
             }
             inventoryState = !inventoryState;
         }

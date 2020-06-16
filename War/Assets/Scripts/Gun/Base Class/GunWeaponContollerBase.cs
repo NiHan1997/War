@@ -23,19 +23,19 @@ public abstract class GunWeaponContollerBase : GunControllerBase
         LoadEffect();
     }
 
-    protected override void LeftMouseButtonDown()
+    public override void LeftMouseButtonDown()
     {
         base.LeftMouseButtonDown();
         PlayEffect();
     }
 
-    protected override void RightMouseButtonDown()
+    public override void RightMouseButtonDown()
     {
         base.RightMouseButtonDown();
         m_GunViewBase.GunStar.gameObject.SetActive(false);
     }
 
-    protected override void RightMouseButtonUp()
+    public override void RightMouseButtonUp()
     {
         base.RightMouseButtonUp();
         m_GunViewBase.GunStar.gameObject.SetActive(true);

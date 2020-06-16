@@ -43,7 +43,7 @@ public class BuildModelsJson : MonoBehaviour
         modelsList = new List<BuildItem>();
         jsonList = new List<BuildItem>();
 
-        jsonPath = Application.dataPath + "/JsonData/ModelsJson.txt";
+        jsonPath = Application.persistentDataPath + "/JsonData/ModelsJson.txt";
     }
 
     /// <summary>

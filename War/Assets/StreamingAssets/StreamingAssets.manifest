@@ -1,0 +1,13 @@
+ManifestFileVersion: 0
+CRC: 30379772
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: jsondata/inventoryjsondatabak.assetbundle
+      Dependencies: {}
+    Info_1:
+      Name: jsondata/inventoryjsondata.assetbundle
+      Dependencies: {}
+    Info_2:
+      Name: jsondata/modelsjson.assetbundle
+      Dependencies: {}

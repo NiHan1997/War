@@ -19,13 +19,13 @@ public abstract class ThrowWeaponContollerBase : GunControllerBase
         m_GunViewBase.HideGunStar();
     }
 
-    protected override void RightMouseButtonDown()
+    public override void RightMouseButtonDown()
     {
         base.RightMouseButtonDown();
         m_GunViewBase.GunStar.gameObject.SetActive(true);
     }
 
-    protected override void RightMouseButtonUp()
+    public override void RightMouseButtonUp()
     {
         base.RightMouseButtonUp();
         m_GunViewBase.GunStar.gameObject.SetActive(false);

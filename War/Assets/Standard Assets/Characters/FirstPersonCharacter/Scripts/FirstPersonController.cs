@@ -38,7 +38,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private float m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
-        [SerializeField] private MouseLook m_MouseLook;
+        [SerializeField] public MouseLook m_MouseLook;
         [SerializeField] private bool m_UseFovKick;
         [SerializeField] private FOVKick m_FovKick = new FOVKick();
         [SerializeField] private bool m_UseHeadBob;
@@ -64,10 +64,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private AudioSource m_AudioSource;
 
         private PlayerState currentState = PlayerState.IDLE;        // 玩家角色的状态.
+        private float speed = 0.0f;
 
         public PlayerState CurrentState { get => currentState; }
         public float M_WalkSpeed { set => m_WalkSpeed = value; }
         public float M_RunSpeed { set => m_RunSpeed = value; }
+        public bool M_Jump { set => m_Jump = value; }
 
         // Use this for initialization
         private void Start()
@@ -119,23 +121,49 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
 
+        //private void FixedUpdate()
+        //{
+        //    float speed;
+        //    GetInput(out speed);
+        //    // always move along the camera forward as it is the direction that it being aimed at
+        //    Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
+
+        //    // get a normal for the surface that is being touched to move along it
+        //    RaycastHit hitInfo;
+        //    Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
+        //                       m_CharacterController.height/2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+        //    desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+
+        //    m_MoveDir.x = desiredMove.x*speed;
+        //    m_MoveDir.z = desiredMove.z*speed;
+
+
+        //    if (m_CharacterController.isGrounded)
+        //    {
+        //        m_MoveDir.y = -m_StickToGroundForce;
+
+        //        if (m_Jump)
+        //        {
+        //            m_MoveDir.y = m_JumpSpeed;
+        //            PlayJumpSound();
+        //            m_Jump = false;
+        //            m_Jumping = true;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
+        //    }
+        //    m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
+
+        //    ProgressStepCycle(speed);
+        //    UpdateCameraPosition(speed);
+
+        //    m_MouseLook.UpdateCursorLock();
+        //}
+
         private void FixedUpdate()
         {
-            float speed;
-            GetInput(out speed);
-            // always move along the camera forward as it is the direction that it being aimed at
-            Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
-
-            // get a normal for the surface that is being touched to move along it
-            RaycastHit hitInfo;
-            Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
-                               m_CharacterController.height/2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
-
-            m_MoveDir.x = desiredMove.x*speed;
-            m_MoveDir.z = desiredMove.z*speed;
-
-
             if (m_CharacterController.isGrounded)
             {
                 m_MoveDir.y = -m_StickToGroundForce;
@@ -150,14 +178,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             else
             {
-                m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
+                m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
             }
-            m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
+            m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
 
             ProgressStepCycle(speed);
             UpdateCameraPosition(speed);
-
-            m_MouseLook.UpdateCursorLock();
         }
 
 
@@ -258,6 +284,52 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 StopAllCoroutines();
                 StartCoroutine(!m_IsWalking ? m_FovKick.FOVKickUp() : m_FovKick.FOVKickDown());
             }
+
+            // 判断玩家目前的状态.
+            if (m_IsWalking == true && (horizontal != 0 || vertical != 0))
+            {
+                currentState = PlayerState.WALK;
+            }
+            else if (m_IsWalking == false && (horizontal != 0 || vertical != 0))
+            {
+                currentState = PlayerState.RUN;
+            }
+            else
+            {
+                currentState = PlayerState.IDLE;
+            }
+        }
+
+        public void GetInputByJoystick(Vector2 dir, bool isWalking)
+        {
+            // Read input
+            float horizontal = dir.x;
+            float vertical = dir.y;
+
+            bool waswalking = m_IsWalking;
+
+            m_IsWalking = isWalking;
+
+            // set the desired speed to be walking or running
+            speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
+            m_Input = new Vector2(horizontal, vertical);
+
+            if (m_IsWalking != waswalking && m_UseFovKick && m_CharacterController.velocity.sqrMagnitude > 0)
+            {
+                StopAllCoroutines();
+                StartCoroutine(!m_IsWalking ? m_FovKick.FOVKickUp() : m_FovKick.FOVKickDown());
+            }
+
+            Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
+
+            // get a normal for the surface that is being touched to move along it
+            RaycastHit hitInfo;
+            Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
+                               m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+
+            m_MoveDir.x = desiredMove.x * speed;
+            m_MoveDir.z = desiredMove.z * speed;
 
             // 判断玩家目前的状态.
             if (m_IsWalking == true && (horizontal != 0 || vertical != 0))

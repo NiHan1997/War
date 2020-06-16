@@ -78,10 +78,10 @@ public abstract class GunControllerBase : MonoBehaviour
     private void MouseControl()
     {
         // 按下鼠标左键射击.
-        if (Input.GetMouseButtonDown(0) && canShoot)
-        {
-            LeftMouseButtonDown();
-        }
+        //if (Input.GetMouseButtonDown(0) && canShoot)
+        //{
+        //    LeftMouseButtonDown();
+        //}
 
         // 按下鼠标右键开镜.
         if (Input.GetMouseButtonDown(1))
@@ -99,7 +99,7 @@ public abstract class GunControllerBase : MonoBehaviour
     /// <summary>
     /// 按下鼠标左键.
     /// </summary>
-    protected virtual void LeftMouseButtonDown()
+    public virtual void LeftMouseButtonDown()
     {
         m_GunViewBase.M_Animator.SetTrigger("Fire");
         Shoot();
@@ -110,7 +110,7 @@ public abstract class GunControllerBase : MonoBehaviour
     /// <summary>
     /// 按下鼠标右键.
     /// </summary>
-    protected virtual void RightMouseButtonDown()
+    public virtual void RightMouseButtonDown()
     {
         m_GunViewBase.M_Animator.SetBool("HoldPose", true);
         m_GunViewBase.EnterHoldPose();
@@ -119,7 +119,7 @@ public abstract class GunControllerBase : MonoBehaviour
     /// <summary>
     /// 抬起鼠标右键.
     /// </summary>
-    protected virtual void RightMouseButtonUp()
+    public virtual void RightMouseButtonUp()
     {
         m_GunViewBase.M_Animator.SetBool("HoldPose", false);
         m_GunViewBase.ExitHoldPose();

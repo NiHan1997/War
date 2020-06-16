@@ -66,7 +66,7 @@ public class InventoryPanelController : MonoBehaviour, IUIPanelHideAndShow
     /// </summary>
     private void CreateAllItems()
     {
-        List<InventoryItem> itemList = m_InventoryPanelModel.GetInentoryDataByName("InventoryJsonData.txt");
+        List<InventoryItem> itemList = m_InventoryPanelModel.GetInentoryData();
         for(int i = 0; i < itemList.Count; ++i)
         {
             GameObject item = GameObject.Instantiate<GameObject>(m_InventoryPanelView.Prefab_Item,

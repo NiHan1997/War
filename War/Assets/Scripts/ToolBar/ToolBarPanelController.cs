@@ -67,6 +67,7 @@ public class ToolBarPanelController : MonoBehaviour
             currentActiveSlot.GetComponent<ToolBarSlotController>().NormalSlot();
         }
         currentActiveSlot = activeSlot;
+        CallGunFactory();
     }
 
     /// <summary>
@@ -77,8 +78,7 @@ public class ToolBarPanelController : MonoBehaviour
         if (slotsList[keyIndex].GetComponent<Transform>().Find("InventoryItem") == null)
             return;
 
-        slotsList[keyIndex].GetComponent<ToolBarSlotController>().SlotClick();
-        CallGunFactory();
+        slotsList[keyIndex].GetComponent<ToolBarSlotController>().SlotClick();        
     }
 
     /// <summary>

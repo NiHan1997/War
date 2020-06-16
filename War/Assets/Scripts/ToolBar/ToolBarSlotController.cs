@@ -10,7 +10,10 @@ public class ToolBarSlotController : MonoBehaviour
 {
     private Transform m_Transform;
     private Image m_Image;
+    private Button m_Button;
     private Text m_KeyText;                         // 编号文字.
+
+    private int index = -1;
 
     private bool isActiveSlot = false;              // 当前物品槽是否激活.
 
@@ -28,7 +31,10 @@ public class ToolBarSlotController : MonoBehaviour
     {
         m_Transform = gameObject.GetComponent<Transform>();
         m_Image = gameObject.GetComponent<Image>();
+        m_Button = gameObject.GetComponent<Button>();
         m_KeyText = m_Transform.Find("Key").GetComponent<Text>();
+
+        m_Button.onClick.AddListener(SlotButtonClick);
     }
 
     /// <summary>
@@ -37,7 +43,17 @@ public class ToolBarSlotController : MonoBehaviour
     public void InitSlot(int index)
     {
         gameObject.name = "Slot_" + index;
+        this.index = index;
         m_KeyText.text = (index + 1).ToString();
+    }
+
+    private void SlotButtonClick()
+    {
+        // 背包面板打开, 不能使用武器.
+        if (InputManager.Instance.InventoryState)
+            return;
+
+        SendMessageUpwards("SaveActiveSlotByKey", index);
     }
 
     /// <summary>

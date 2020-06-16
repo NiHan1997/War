@@ -21,6 +21,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Quaternion m_CameraTargetRot;
         private bool m_cursorIsLocked = true;
 
+        private float xRotaion = 0.0f;
+        private float yRotaion = 0.0f;
+
+        public float XRotaion { set => xRotaion = value; }
+        public float YRotaion { set => yRotaion = value; }
+
+
         public void Init(Transform character, Transform camera)
         {
             m_CharacterTargetRot = character.localRotation;
@@ -30,8 +37,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void LookRotation(Transform character, Transform camera)
         {
+#if MOBILE_INPUT
+            float yRot = xRotaion * XSensitivity;
+            float xRot = yRotaion * YSensitivity;
+#else
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+#endif
 
             m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
             m_CameraTargetRot *= Quaternion.Euler (-xRot, 0f, 0f);
